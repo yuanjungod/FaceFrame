@@ -92,7 +92,6 @@ def fun():
         # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
         rgb_small_frame = small_frame[:, :, ::-1]
         face_locations = []
-        face_encodings = []
         user_id = -1
         # Only process every other frame of video to save time
         if process_this_frame:
@@ -103,19 +102,23 @@ def fun():
 
             for face_encoding in face_encodings:
                 name = "Unknown"
+                user_id = -1
                 # See if the face is a match for the known face(s)
-                print(face_recognition.face_distance([i[2] for i in face_encoding_list], face_encoding))
-                match = face_recognition.compare_faces(
-                    [i[2] for i in face_encoding_list], face_encoding, 0.33)
-                # match1 = face_recognition.compare_faces([xusheng_face_encoding], face_encoding)
-                # match2 = face_recognition.compare_faces([ziyu_face_encoding], face_encoding)
-                # match3 = face_recognition.compare_faces([zilu_face_encoding], face_encoding)
-
-                for i in range(len(match)):
-                    if match[i]:
+                current_match_score = 0.35
+                match_scores = face_recognition.face_distance([i[2] for i in face_encoding_list], face_encoding)
+                for i, match_score in enumerate(match_scores):
+                    if match_score < current_match_score:
                         name = face_encoding_list[i][0]
                         user_id = face_encoding_list[i][1]
-                print("match count:", match.count(True))
+
+                # match = face_recognition.compare_faces(
+                #     [i[2] for i in face_encoding_list], face_encoding, 0.33)
+                #
+                # for i in range(len(match)):
+                #     if match[i]:
+                #         name = face_encoding_list[i][0]
+                #         user_id = face_encoding_list[i][1]
+                # print("match count:", match.count(True))
                 face_names.append(name)
                 print(face_names)
         # process_this_frame = not process_this_frame
