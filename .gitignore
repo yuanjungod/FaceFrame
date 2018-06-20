@@ -1,5 +1,5 @@
 # PyCharm project setting
 
 .idea
-env
+env/*
 dlib_face_recognition_resnet_model_v1.dat
