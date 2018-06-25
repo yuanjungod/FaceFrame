@@ -104,8 +104,8 @@ def face_detect():
     shape = image.shape
     print(shape)
     if shape[0] > 300:
-        radio = 200 / shape[0]
-        image = cv2.resize(image, (200, int(shape[1] * radio)))
+        radio = 300 / shape[0]
+        image = cv2.resize(image, (int(shape[1] * radio), 300))
         print(image.shape)
     print("loading pic", time.time() - start)
     start = time.time()
@@ -116,17 +116,18 @@ def face_detect():
     if len(face_locations) > 0:
         start = time.time()
         face_encoding_list = face_recognition.face_encodings(image, face_locations, num_jitters)
-        print("face_encoding", time.time() - start)
-        for i in range(face_encoding_list):
+        print("face_encoding", time.time() - start, len(face_encoding_list))
+        for i in range(len(face_encoding_list)):
+
             result["face_list"].append(
                 {
                     "face_token": md5(face_encoding_list[i].tolist()),
                     "location":
                     {
-                        "left": face_locations[0],
-                        "top": face_locations[1],
-                        "width": face_locations[2],
-                        "height": face_locations[3],
+                        "left": face_locations[0][0],
+                        "top": face_locations[0][1],
+                        "width": face_locations[0][2],
+                        "height": face_locations[0][3],
                     }
                 }
             )
