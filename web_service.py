@@ -45,12 +45,34 @@ for i in sql_client.select(field="*", table_name="keruyun.image"):
         feature_dict[i["appid"]][i["group_id"]]["uid_list"] = list()
     if "image_encoding_list" not in feature_dict[i["appid"]][i["group_id"]]:
         feature_dict[i["appid"]][i["group_id"]]["image_encoding_list"] = list()
+    if "image_token_list" not in feature_dict[i["appid"]][i["group_id"]]:
+        feature_dict[i["appid"]][i["group_id"]]["image_token_list"] = list()
     feature_dict[i["appid"]][i["group_id"]]["uid_list"].append(i["uid"])
+    feature_dict[i["appid"]][i["group_id"]]["image_token_list"].append(i["image_token"])
     feature_dict[i["appid"]][i["group_id"]]["image_encoding_list"].append(json.loads(i["image_encoding"]))
 
 
 @app.route('/face_register', methods=['GET', 'POST'])
 def face_register():
+    global max_id
+    # update feature_dict from face_encoding table
+    for i in sql_client.select(field="*", table_name="keruyun.image", where="id > %s" % max_id):
+        if i["appid"] not in feature_dict:
+            feature_dict[i["appid"]] = dict()
+        if i["group_id"] not in feature_dict[i["appid"]]:
+            feature_dict[i["appid"]][i["group_id"]] = dict()
+        if "uid_list" not in feature_dict[i["appid"]][i["group_id"]]:
+            feature_dict[i["appid"]][i["group_id"]]["uid_list"] = list()
+        if "image_encoding_list" not in feature_dict[i["appid"]][i["group_id"]]:
+            feature_dict[i["appid"]][i["group_id"]]["image_encoding_list"] = list()
+        if "image_token_list" not in feature_dict[i["appid"]][i["group_id"]]:
+            feature_dict[i["appid"]][i["group_id"]]["image_token_list"] = list()
+
+        feature_dict[i["appid"]][i["group_id"]]["uid_list"].append(i["uid"])
+        feature_dict[i["appid"]][i["group_id"]]["image_token_list"].append(i["image_token"])
+        feature_dict[i["appid"]][i["group_id"]]["image_encoding_list"].append(json.loads(i["image_encoding"]))
+    max_id = sql_client.select(field="max(id) as max_id", table_name="keruyun.image")[0]["max_id"]
+
     start = time.time()
     print("A", os.getpid(), os.getppid())
     image_name = request.values.get("image_name")
@@ -78,7 +100,7 @@ def face_register():
     print("face_encoding", time.time() - start)
     token = md5(face_encoding.tolist())
 
-    if appid in feature_dict and group_id in feature_dict[appid] and uid in feature_dict[appid][group_id]:
+    if appid in feature_dict and group_id in feature_dict[appid] and token in feature_dict[appid][group_id]["image_token_list"]:
         return jsonify({})
 
     sql_client.insert(table_name="keruyun.image", params={
@@ -158,7 +180,11 @@ def face_search():
             feature_dict[i["appid"]][i["group_id"]]["uid_list"] = list()
         if "image_encoding_list" not in feature_dict[i["appid"]][i["group_id"]]:
             feature_dict[i["appid"]][i["group_id"]]["image_encoding_list"] = list()
+        if "image_token_list" not in feature_dict[i["appid"]][i["group_id"]]:
+            feature_dict[i["appid"]][i["group_id"]]["image_token_list"] = list()
+
         feature_dict[i["appid"]][i["group_id"]]["uid_list"].append(i["uid"])
+        feature_dict[i["appid"]][i["group_id"]]["image_token_list"].append(i["image_token"])
         feature_dict[i["appid"]][i["group_id"]]["image_encoding_list"].append(json.loads(i["image_encoding"]))
     max_id = sql_client.select(field="max(id) as max_id", table_name="keruyun.image")[0]["max_id"]
 
@@ -200,7 +226,7 @@ def face_search():
     face_locations = face_recognition.face_locations(image, number_of_times_to_upsample)
     print("face_locations", time.time() - start, face_locations)
     if len(face_locations) == 0:
-        return jsonify([])
+        return jsonify({})
     start = time.time()
     face_encoding = face_recognition.face_encodings(image, face_locations, num_jitters)[0]
     token = md5(face_encoding.tolist())
