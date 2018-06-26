@@ -30,6 +30,9 @@ num_jitters = 1
 number_of_times_to_upsample = 1
 
 max_id = sql_client.select(field="max(id) as max_id", table_name="keruyun.image")[0]["max_id"]
+if max_id is None:
+    max_id = 0
+print(max_id)
 
 feature_dict = dict()
 
@@ -176,6 +179,9 @@ def face_search():
     if max_user_num is None:
         max_user_num = 5
 
+    if appid not in feature_dict:
+        return jsonify([])
+
     image = aliyun_oss.pull_image_from_aliyun("%s/%s/%s" % (appid, group_id, image_name))
     if image is None:
         return jsonify([])
@@ -201,6 +207,8 @@ def face_search():
     result_list["user_list"] = list()
     for search_group_id in search_group_id_list.split(","):
         start = time.time()
+        if search_group_id not in feature_dict[appid]:
+            continue
         result = np.linalg.norm(np.array(feature_dict[appid][search_group_id]["image_encoding_list"]) - face_encoding, axis=1)
         result = [[result[i], feature_dict[appid][search_group_id]["uid_list"][i]] for i in range(len(result))]
         result = sorted(result, key=lambda a: a[0], reverse=True)
