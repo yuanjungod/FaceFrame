@@ -64,7 +64,7 @@ def face_register():
     print(shape)
     if shape[0] > 300:
         radio = 300/shape[0]
-        print((int(shape[1]*radio)))
+        print(int(shape[1]*radio), radio, shape[1])
         image = cv2.resize(image, (int(shape[1]*radio), 300))
         print(image.shape)
     print("loading pic", time.time() - start)
