@@ -55,7 +55,8 @@ def face_register():
     group_id = request.values.get("group_id")
     uid = request.values.get("uid")
     image = aliyun_oss.pull_image_from_aliyun("%s/%s/%s/%s" % (appid, group_id, uid, image_name))
-
+    if image is None:
+        return jsonify({})
     shape = image.shape
     print(shape)
     if shape[0] > 300:
@@ -100,7 +101,8 @@ def face_detect():
         return jsonify({"error": "need group_id!"})
 
     image = aliyun_oss.pull_image_from_aliyun("%s/%s/%s" % (appid, group_id, image_name))
-
+    if image is None:
+        return jsonify({})
     shape = image.shape
     print(shape)
     if shape[0] > 300:
@@ -131,7 +133,9 @@ def face_detect():
                     }
                 }
             )
-    return jsonify(result)
+        return jsonify(result)
+    else:
+        return jsonify({})
 
 
 @app.route('/face_search', methods=['GET', 'POST'])
@@ -173,7 +177,8 @@ def face_search():
         max_user_num = 5
 
     image = aliyun_oss.pull_image_from_aliyun("%s/%s/%s" % (appid, group_id, image_name))
-
+    if image is None:
+        return jsonify([])
     shape = image.shape
     print(shape)
     if shape[0] > 300:

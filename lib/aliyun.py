@@ -16,10 +16,13 @@ class Aliyun(object):
         return self.bucket.put_object_from_file(remote_file_name, local_file_name)
 
     def pull_image_from_aliyun(self, remote_file_name):
-        image = np.asarray(bytearray(self.bucket.get_object(remote_file_name).read()), dtype="uint8")
-        image = cv2.imdecode(image, cv2.IMREAD_COLOR)
-        image = image[:, :, ::-1]
-        return image
+        try:
+            image = np.asarray(bytearray(self.bucket.get_object(remote_file_name).read()), dtype="uint8")
+            image = cv2.imdecode(image, cv2.IMREAD_COLOR)
+            image = image[:, :, ::-1]
+            return image
+        except:
+            return None
 
 
 if __name__ == "__main__":
