@@ -130,10 +130,10 @@ def face_detect():
                     "face_token": md5(face_encoding_list[i].tolist()),
                     "location":
                     {
-                        "left": face_locations[0][0],
-                        "top": face_locations[0][1],
-                        "width": face_locations[0][2],
-                        "height": face_locations[0][3],
+                        "top": face_locations[0][0],
+                        "right": face_locations[0][1],
+                        "bottom": face_locations[0][2],
+                        "left": face_locations[0][3],
                     }
                 }
             )
