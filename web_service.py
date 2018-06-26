@@ -78,6 +78,9 @@ def face_register():
     print("face_encoding", time.time() - start)
     token = md5(face_encoding.tolist())
 
+    if appid in feature_dict and group_id in feature_dict[appid] and uid in feature_dict[appid][group_id]:
+        return jsonify({})
+
     sql_client.insert(table_name="keruyun.image", params={
         "uid": uid, "appid": appid, "group_id": group_id,
         "image_name": image_name, "image_encoding": json.dumps(face_encoding.tolist()),
@@ -181,11 +184,11 @@ def face_search():
         max_user_num = 5
 
     if appid not in feature_dict:
-        return jsonify([])
+        return jsonify({})
 
     image = aliyun_oss.pull_image_from_aliyun("%s/%s/%s" % (appid, group_id, image_name))
     if image is None:
-        return jsonify([])
+        return jsonify({})
     shape = image.shape
     print(shape)
     if shape[0] > 300:
