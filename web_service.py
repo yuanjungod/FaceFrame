@@ -110,7 +110,7 @@ def face_detect():
     shape = image.shape
     print(shape)
     if shape[0] > 300:
-        radio = 300 / shape[0]
+        radio = 300.0 / shape[0]
         image = cv2.resize(image, (int(shape[1] * radio), 300))
         print(image.shape)
     print("loading pic", time.time() - start)
@@ -189,7 +189,7 @@ def face_search():
     shape = image.shape
     print(shape)
     if shape[0] > 300:
-        radio = 300 / shape[0]
+        radio = 300.0 / shape[0]
         image = cv2.resize(image, (int(shape[1] * radio), 300))
         print(image.shape)
     print("loading pic", time.time() - start)
