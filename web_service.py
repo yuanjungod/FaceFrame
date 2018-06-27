@@ -63,6 +63,7 @@ mutex.release()
 def face_register():
     mutex.acquire()
     global max_id
+    print("max_id: %s" % max_id)
     # update feature_dict from face_encoding table
     for i in sql_client.select(field="*", table_name="keruyun.image", where="id > %s" % max_id):
         if i["appid"] not in feature_dict:
