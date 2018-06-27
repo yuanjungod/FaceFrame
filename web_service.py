@@ -10,6 +10,10 @@ import json
 from lib.mysql import MysqlClient
 from lib.aliyun import Aliyun
 from config import *
+import threading
+
+
+mutex = threading.Lock()
 
 
 def md5(face_encoding):
@@ -29,6 +33,8 @@ face_dict = dict()
 num_jitters = 1
 number_of_times_to_upsample = 1
 
+
+mutex.acquire()
 max_id = sql_client.select(field="max(id) as max_id", table_name="keruyun.image")[0]["max_id"]
 if max_id is None:
     max_id = 0
@@ -50,10 +56,12 @@ for i in sql_client.select(field="*", table_name="keruyun.image"):
     feature_dict[i["appid"]][i["group_id"]]["uid_list"].append(i["uid"])
     feature_dict[i["appid"]][i["group_id"]]["image_token_list"].append(i["image_token"])
     feature_dict[i["appid"]][i["group_id"]]["image_encoding_list"].append(json.loads(i["image_encoding"]))
+mutex.release()
 
 
 @app.route('/face_register', methods=['GET', 'POST'])
 def face_register():
+    mutex.acquire()
     global max_id
     # update feature_dict from face_encoding table
     for i in sql_client.select(field="*", table_name="keruyun.image", where="id > %s" % max_id):
@@ -74,6 +82,7 @@ def face_register():
     max_id = sql_client.select(field="max(id) as max_id", table_name="keruyun.image")[0]["max_id"]
     if max_id is None:
         max_id = 0
+    mutex.release()
 
     start = time.time()
     print("A", os.getpid(), os.getppid())
@@ -171,6 +180,7 @@ def face_detect():
 
 @app.route('/face_search', methods=['GET', 'POST'])
 def face_search():
+    mutex.acquire()
     global max_id
     # update feature_dict from face_encoding table
     for i in sql_client.select(field="*", table_name="keruyun.image", where="id > %s" % max_id):
@@ -191,6 +201,7 @@ def face_search():
     max_id = sql_client.select(field="max(id) as max_id", table_name="keruyun.image")[0]["max_id"]
     if max_id is None:
         max_id = 0
+    mutex.release()
 
     start = time.time()
     print("A", os.getpid(), os.getppid())
