@@ -90,6 +90,8 @@ def face_register():
     appid = request.values.get("appid")
     group_id = request.values.get("group_id")
     uid = request.values.get("uid")
+
+    print("face register %s/%s/%s%s" % (appid, group_id, uid, image_name))
     image = aliyun_oss.pull_image_from_aliyun("%s/%s/%s/%s" % (appid, group_id, uid, image_name))
     if image is None:
         return jsonify({})
@@ -139,7 +141,7 @@ def face_detect():
     group_id = request.values.get("group_id")
     if group_id is None:
         return jsonify({"error": "need group_id!"})
-
+    print("face detect %s/%s/%s" % (appid, group_id, image_name))
     image = aliyun_oss.pull_image_from_aliyun("%s/%s/%s" % (appid, group_id, image_name))
     if image is None:
         return jsonify({})
@@ -226,7 +228,7 @@ def face_search():
 
     if appid not in feature_dict:
         return jsonify({})
-
+    print("face search %s/%s/%s" % (appid, group_id, image_name))
     image = aliyun_oss.pull_image_from_aliyun("%s/%s/%s" % (appid, group_id, image_name))
     if image is None:
         return jsonify({})
