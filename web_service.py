@@ -173,11 +173,11 @@ def face_detect():
     if not re.match("^[A-Za-z0-9_-]*$", appid):
         return jsonify({"errorMessage": "appid contain illegal character"})
 
-    group_id = request.values.get("group_id")
-    if group_id is None or group_id == "":
-        return jsonify({"errorMessage": "need group_id!"})
-    if not re.match("^[A-Za-z0-9_-]*$", group_id):
-        return jsonify({"errorMessage": "group_id contain illegal character"})
+    # group_id = request.values.get("group_id")
+    # if group_id is None or group_id == "":
+    #     return jsonify({"errorMessage": "need group_id!"})
+    # if not re.match("^[A-Za-z0-9_-]*$", group_id):
+    #     return jsonify({"errorMessage": "group_id contain illegal character"})
 
     image = base64_to_image(base64_image_str)
     # image = aliyun_oss.pull_image_from_aliyun("%s/%s/%s" % (appid, group_id, image_name))
