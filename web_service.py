@@ -94,7 +94,7 @@ def face_register():
     image_name = request.values.get("image_name")
     if image_name is None or image_name == "":
         return jsonify({"errorMessage": "need image_name!"})
-    if not re.match("^[A-Za-z0-9_-]*$", image_name):
+    if not re.match("^[A-Za-z0-9_.-]*$", image_name):
         return jsonify({"errorMessage": "image name contain illegal character"})
 
     appid = request.values.get("appid")
@@ -158,7 +158,7 @@ def face_detect():
     image_name = request.values.get("image_name")
     if image_name is None or image_name == "":
         return jsonify({"errorMessage": "need image_name!"})
-    if not re.match("^[A-Za-z0-9_-]*$", image_name):
+    if not re.match("^[A-Za-z0-9_.-]*$", image_name):
         return jsonify({"errorMessage": "image name contain illegal character"})
 
     appid = request.values.get("appid")
@@ -241,7 +241,7 @@ def face_search():
     image_name = request.values.get("image_name")
     if image_name is None or image_name == "":
         return jsonify({"errorMessage": "need image_name!"})
-    if not re.match("^[A-Za-z0-9_-]*$", image_name):
+    if not re.match("^[A-Za-z0-9_.-]*$", image_name):
         return jsonify({"errorMessage": "image name contain illegal character"})
 
     appid = request.values.get("appid")
