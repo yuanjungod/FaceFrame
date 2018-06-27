@@ -145,7 +145,7 @@ def face_detect():
     image = aliyun_oss.pull_image_from_aliyun("%s/%s/%s" % (appid, group_id, image_name))
     if image is None:
         print("%s/%s/%s not exist" % (appid, group_id, image_name))
-        return jsonify({"errorMessage": "%s/%s/%s not exist" % (appid, group_id, image_name)})
+        return jsonify({"errorMessage": "%s/%s/%s not exist!!!!" % (appid, group_id, image_name)})
     shape = image.shape
     print(shape)
     if shape[0] > 300:
@@ -230,7 +230,7 @@ def face_search():
     image = aliyun_oss.pull_image_from_aliyun("%s/%s/%s" % (appid, group_id, image_name))
     if image is None:
         print("%s/%s/%s not exist" % (appid, group_id, image_name))
-        return jsonify({"errorMessage": "%s/%s/%s not exist" % (appid, group_id, image_name)})
+        return jsonify({"errorMessage": "%s/%s/%s not exist!!!!" % (appid, group_id, image_name)})
     shape = image.shape
     print(shape)
     if shape[0] > 300:
