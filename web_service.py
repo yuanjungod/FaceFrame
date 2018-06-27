@@ -11,6 +11,7 @@ from lib.mysql import MysqlClient
 from lib.aliyun import Aliyun
 from config import *
 import threading
+import re
 
 
 mutex = threading.Lock()
@@ -89,10 +90,30 @@ def face_register():
 
     start = time.time()
     print("A", os.getpid(), os.getppid())
+
     image_name = request.values.get("image_name")
+    if image_name is None or image_name == "":
+        return jsonify({"errorMessage": "need image_name!"})
+    if not re.match("^[A-Za-z0-9_-]*$", image_name):
+        return jsonify({"errorMessage": "image name contain illegal character"})
+
     appid = request.values.get("appid")
+    if appid is None or appid == "":
+        return jsonify({"errorMessage": "need appid!"})
+    if not re.match("^[A-Za-z0-9_-]*$", appid):
+        return jsonify({"errorMessage": "appid contain illegal character"})
+
     group_id = request.values.get("group_id")
+    if group_id is None or group_id == "":
+        return jsonify({"errorMessage": "need group_id!"})
+    if not re.match("^[A-Za-z0-9_-]*$", group_id):
+        return jsonify({"errorMessage": "group_id contain illegal character"})
+
     uid = request.values.get("uid")
+    if uid is None or uid == "":
+        return jsonify({"errorMessage": "need uid!"})
+    if not re.match("^[A-Za-z0-9_-]*$", uid):
+        return jsonify({"errorMessage": "uid contain illegal character"})
 
     image = aliyun_oss.pull_image_from_aliyun("%s/%s/%s/%s" % (appid, group_id, uid, image_name))
     if image is None:
@@ -135,15 +156,23 @@ def face_detect():
     print("A", os.getpid(), os.getppid())
 
     image_name = request.values.get("image_name")
-    if image_name is None:
+    if image_name is None or image_name == "":
         return jsonify({"errorMessage": "need image_name!"})
+    if not re.match("^[A-Za-z0-9_-]*$", image_name):
+        return jsonify({"errorMessage": "image name contain illegal character"})
+
     appid = request.values.get("appid")
-    if appid is None:
+    if appid is None or appid == "":
         return jsonify({"errorMessage": "need appid!"})
+    if not re.match("^[A-Za-z0-9_-]*$", appid):
+        return jsonify({"errorMessage": "appid contain illegal character"})
 
     group_id = request.values.get("group_id")
-    if group_id is None:
+    if group_id is None or group_id == "":
         return jsonify({"errorMessage": "need group_id!"})
+    if not re.match("^[A-Za-z0-9_-]*$", group_id):
+        return jsonify({"errorMessage": "group_id contain illegal character"})
+
     print("face detect %s/%s/%s" % (appid, group_id, image_name))
     image = aliyun_oss.pull_image_from_aliyun("%s/%s/%s" % (appid, group_id, image_name))
     if image is None:
@@ -210,19 +239,29 @@ def face_search():
     start = time.time()
     print("A", os.getpid(), os.getppid())
     image_name = request.values.get("image_name")
-    if image_name is None:
+    if image_name is None or image_name == "":
         return jsonify({"errorMessage": "need image_name!"})
+    if not re.match("^[A-Za-z0-9_-]*$", image_name):
+        return jsonify({"errorMessage": "image name contain illegal character"})
+
     appid = request.values.get("appid")
-    if appid is None:
+    if appid is None or appid == "":
         return jsonify({"errorMessage": "need appid!"})
+    if not re.match("^[A-Za-z0-9_-]*$", appid):
+        return jsonify({"errorMessage": "appid contain illegal character"})
 
     group_id = request.values.get("group_id")
-    if group_id is None:
+    if group_id is None or group_id == "":
         return jsonify({"errorMessage": "need group_id!"})
+    if not re.match("^[A-Za-z0-9_-]*$", group_id):
+        return jsonify({"errorMessage": "group_id contain illegal character"})
 
     search_group_id_list = request.values.get("search_group_id_list")
-    if search_group_id_list is None:
+    if search_group_id_list is None or search_group_id_list == "":
         return jsonify({"errorMessage": "need search_group_id_list!"})
+    for search_group_id in search_group_id_list.split(","):
+        if not re.match("^[A-Za-z0-9_-]*$", search_group_id):
+            return jsonify({"errorMessage": "search_group_id_list contain illegal character"})
 
     max_user_num = request.values.get("max_user_num")
     if max_user_num is None:
