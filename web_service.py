@@ -270,7 +270,7 @@ def face_search():
     for search_group_id in search_group_id_list.split(","):
         if not re.match("^[A-Za-z0-9_-]*$", search_group_id):
             return jsonify({"errorMessage": "search_group_id_list contain illegal character"})
-        if not search_group_id not in feature_dict[appid]:
+        if search_group_id not in feature_dict[appid]:
             return jsonify({"errorMessage": "search_group_id_list invalid"})
 
     max_user_num = request.values.get("max_user_num")
