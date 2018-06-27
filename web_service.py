@@ -66,6 +66,7 @@ def face_register():
     print("max_id: %s" % max_id)
     # update feature_dict from face_encoding table
     for i in sql_client.select(field="*", table_name="keruyun.image", where="id > %s" % max_id):
+        print("***********", i)
         if i["appid"] not in feature_dict:
             feature_dict[i["appid"]] = dict()
         if i["group_id"] not in feature_dict[i["appid"]]:
