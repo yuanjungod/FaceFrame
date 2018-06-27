@@ -173,6 +173,9 @@ def face_detect():
     if not re.match("^[A-Za-z0-9_-]*$", appid):
         return jsonify({"errorMessage": "appid contain illegal character"})
 
+    if appid not in feature_dict:
+        return jsonify({"errorMessage": "appid invalid"})
+
     # group_id = request.values.get("group_id")
     # if group_id is None or group_id == "":
     #     return jsonify({"errorMessage": "need group_id!"})
