@@ -3,7 +3,8 @@
 import pymysql
 import pymysql.cursors
 import logging
-import pandas as pd
+# import pandas as pd
+
 
 __all__ = ['MysqlClient']
 

@@ -15,6 +15,13 @@ class Aliyun(object):
     def push_image2aliyun(self, remote_file_name, local_file_name):
         return self.bucket.put_object_from_file(remote_file_name, local_file_name)
 
+    def push_object2aliyun(self, remote_fine_name, image):
+        img_encode = cv2.imencode('.jpg', image)[1]
+        print(type(img_encode))
+        data_encode = np.array(img_encode)
+        str_encode = data_encode.tostring()
+        self.bucket.put_object(remote_fine_name, str_encode)
+
     def pull_image_from_aliyun(self, remote_file_name):
         try:
             image = np.asarray(bytearray(self.bucket.get_object(remote_file_name).read()), dtype="uint8")
@@ -37,13 +44,15 @@ if __name__ == "__main__":
     }
 
     aliyun = Aliyun(account_info)
-    sql_client = MysqlClient(host='localhost', user='root')
-    start = time.time()
+    # sql_client = MysqlClient(host='localhost', user='root')
+    # start = time.time()
+    image = cv2.imread("../face_images/zilu_4.jpg")
+    aliyun.push_object2aliyun("fuck.jpg", image)
 
-    for image_path in os.listdir("../face_images"):
-        aliyun.push_image2aliyun("2/1/%s/%s" % (
-            image_path.split("_")[1].split(".")[0], image_path), "../face_images/%s" % image_path)
-        print(time.time()-start)
+    # for image_path in os.listdir("../face_images"):
+    #     aliyun.push_image2aliyun("2/1/%s/%s" % (
+    #         image_path.split("_")[1].split(".")[0], image_path), "../face_images/%s" % image_path)
+    #     print(time.time()-start)
     # start = time.time()
     # image = aliyun.pull_image_from_aliyun("2/1/biantaigou_999090.png")
     # print(image.shape)

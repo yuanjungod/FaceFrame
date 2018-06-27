@@ -12,7 +12,7 @@ from lib.aliyun import Aliyun
 from config import *
 import threading
 import re
-
+import os, base64
 
 mutex = threading.Lock()
 
@@ -22,6 +22,16 @@ def md5(face_encoding):
     m = hashlib.md5()
     m.update(json.dumps(face_encoding).encode())
     return m.hexdigest()
+
+
+def base64_to_image(strs):
+    try:
+        imgdata = base64.b64decode(strs)
+        nparr = np.fromstring(imgdata, np.uint8)
+        image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        return image
+    except:
+        return None
 
 
 sql_client = MysqlClient(host='localhost', user='root')
@@ -91,11 +101,9 @@ def face_register():
     start = time.time()
     print("A", os.getpid(), os.getppid())
 
-    image_name = request.values.get("image_name")
-    if image_name is None or image_name == "":
-        return jsonify({"errorMessage": "need image_name!"})
-    if not re.match("^[A-Za-z0-9_.-]*$", image_name):
-        return jsonify({"errorMessage": "image name contain illegal character"})
+    base64_image_str = request.values.get("base64_image_str")
+    if base64_image_str is None or base64_image_str == "":
+        return jsonify({"errorMessage": "need base64_image_str!"})
 
     appid = request.values.get("appid")
     if appid is None or appid == "":
@@ -115,10 +123,10 @@ def face_register():
     if not re.match("^[A-Za-z0-9_-]*$", uid):
         return jsonify({"errorMessage": "uid contain illegal character"})
 
-    image = aliyun_oss.pull_image_from_aliyun("%s/%s/%s/%s" % (appid, group_id, uid, image_name))
+    image = base64_to_image(base64_image_str)
+    # image = aliyun_oss.pull_image_from_aliyun("%s/%s/%s/%s" % (appid, group_id, uid, image_name))
     if image is None:
-        print("%s/%s/%s/%s not exist" % (appid, group_id, uid, image_name))
-        return jsonify({"errorMessage": "%s/%s/%s/%s not exist!!!!" % (appid, group_id, uid, image_name)})
+        return jsonify({"errorMessage": "base64_image_str wrong"})
     shape = image.shape
     print(shape)
     if shape[0] > 300:
@@ -139,13 +147,13 @@ def face_register():
 
     if appid in feature_dict and group_id in feature_dict[appid] and token in feature_dict[appid][group_id]["image_token_list"]:
         return jsonify({"errorMessage": "same pic repeat register"})
-
+    image_name = "%s-%s-%s.jpg" % (os.getpid(), os.getppid(), time.time())
+    aliyun_oss.push_object2aliyun("%s/%s/%s/%s" % (appid, group_id, uid, image_name), image)
     sql_client.insert(table_name="keruyun.image", params={
         "uid": uid, "appid": appid, "group_id": group_id,
         "image_name": image_name, "image_encoding": json.dumps(face_encoding.tolist()),
         "image_token": token
     })
-
     return jsonify({"face_token": token})
 
 
@@ -155,11 +163,9 @@ def face_detect():
     start = time.time()
     print("A", os.getpid(), os.getppid())
 
-    image_name = request.values.get("image_name")
-    if image_name is None or image_name == "":
-        return jsonify({"errorMessage": "need image_name!"})
-    if not re.match("^[A-Za-z0-9_.-]*$", image_name):
-        return jsonify({"errorMessage": "image name contain illegal character"})
+    base64_image_str = request.values.get("base64_image_str")
+    if base64_image_str is None or base64_image_str == "":
+        return jsonify({"errorMessage": "need base64_image_str!"})
 
     appid = request.values.get("appid")
     if appid is None or appid == "":
@@ -173,11 +179,10 @@ def face_detect():
     if not re.match("^[A-Za-z0-9_-]*$", group_id):
         return jsonify({"errorMessage": "group_id contain illegal character"})
 
-    print("face detect %s/%s/%s" % (appid, group_id, image_name))
-    image = aliyun_oss.pull_image_from_aliyun("%s/%s/%s" % (appid, group_id, image_name))
+    image = base64_to_image(base64_image_str)
+    # image = aliyun_oss.pull_image_from_aliyun("%s/%s/%s" % (appid, group_id, image_name))
     if image is None:
-        print("%s/%s/%s not exist" % (appid, group_id, image_name))
-        return jsonify({"errorMessage": "%s/%s/%s not exist!!!!" % (appid, group_id, image_name)})
+        return jsonify({"errorMessage": "base64_image_str wrong"})
     shape = image.shape
     print(shape)
     if shape[0] > 300:
@@ -238,11 +243,9 @@ def face_search():
 
     start = time.time()
     print("A", os.getpid(), os.getppid())
-    image_name = request.values.get("image_name")
-    if image_name is None or image_name == "":
-        return jsonify({"errorMessage": "need image_name!"})
-    if not re.match("^[A-Za-z0-9_.-]*$", image_name):
-        return jsonify({"errorMessage": "image name contain illegal character"})
+    base64_image_str = request.values.get("base64_image_str")
+    if base64_image_str is None or base64_image_str == "":
+        return jsonify({"errorMessage": "need base64_image_str!"})
 
     appid = request.values.get("appid")
     if appid is None or appid == "":
@@ -269,11 +272,13 @@ def face_search():
 
     if appid not in feature_dict:
         return jsonify({"errorMessage": "appid invalid"})
-    print("face search %s/%s/%s" % (appid, group_id, image_name))
-    image = aliyun_oss.pull_image_from_aliyun("%s/%s/%s" % (appid, group_id, image_name))
+
+    # print("face search %s/%s/%s" % (appid, group_id, image_name))
+
+    image = base64_to_image(base64_image_str)
+    # image = aliyun_oss.pull_image_from_aliyun("%s/%s/%s" % (appid, group_id, image_name))
     if image is None:
-        print("%s/%s/%s not exist" % (appid, group_id, image_name))
-        return jsonify({"errorMessage": "%s/%s/%s not exist!!!!" % (appid, group_id, image_name)})
+        return jsonify({"errorMessage": "base64_image_str wrong"})
     shape = image.shape
     print(shape)
     if shape[0] > 300:
