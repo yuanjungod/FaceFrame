@@ -92,7 +92,6 @@ def face_register():
     group_id = request.values.get("group_id")
     uid = request.values.get("uid")
 
-    print("face register %s/%s/%s%s" % (appid, group_id, uid, image_name))
     image = aliyun_oss.pull_image_from_aliyun("%s/%s/%s/%s" % (appid, group_id, uid, image_name))
     if image is None:
         print("%s/%s/%s/%s not exist" % (appid, group_id, uid, image_name))
@@ -101,18 +100,18 @@ def face_register():
     print(shape)
     if shape[0] > 300:
         radio = (300*1.0)/shape[0]
-        print(int(shape[1]*radio), radio, shape[1])
+        # print(int(shape[1]*radio), radio, shape[1])
         image = cv2.resize(image, (int(shape[1]*radio), 300))
-        print(image.shape)
-    print("loading pic", time.time() - start)
+        # print(image.shape)
+    # print("loading pic", time.time() - start)
     start = time.time()
     face_locations = face_recognition.face_locations(image, number_of_times_to_upsample)
-    print("face_locations", time.time() - start, face_locations)
+    # print("face_locations", time.time() - start, face_locations)
     if len(face_locations) != 1:
         return jsonify({"errorMessage": "face num is not one!!!!"})
     start = time.time()
     face_encoding = face_recognition.face_encodings(image, face_locations, num_jitters)[0]
-    print("face_encoding", time.time() - start)
+    # print("face_encoding", time.time() - start)
     token = md5(face_encoding.tolist())
 
     if appid in feature_dict and group_id in feature_dict[appid] and token in feature_dict[appid][group_id]["image_token_list"]:
