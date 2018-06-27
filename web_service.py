@@ -230,7 +230,7 @@ def face_search():
     image = aliyun_oss.pull_image_from_aliyun("%s/%s/%s" % (appid, group_id, image_name))
     if image is None:
         print("%s/%s/%s not exist" % (appid, group_id, image_name))
-        return jsonify({})
+        return jsonify({"errorMessage": "%s/%s/%s not exist" % (appid, group_id, image_name)})
     shape = image.shape
     print(shape)
     if shape[0] > 300:
@@ -242,7 +242,7 @@ def face_search():
     face_locations = face_recognition.face_locations(image, number_of_times_to_upsample)
     print("face_locations", time.time() - start, face_locations)
     if len(face_locations) == 0:
-        return jsonify({})
+        return jsonify({"info": "can not find face!!!"})
     start = time.time()
     face_encoding = face_recognition.face_encodings(image, face_locations, num_jitters)[0]
     token = md5(face_encoding.tolist())
