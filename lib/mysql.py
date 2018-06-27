@@ -13,6 +13,7 @@ class MysqlClient(object):
     logger = logging.getLogger('logger')
 
     def __init__(self, host='', user='', password='', port=3306, charset='utf8'):
+        print("mysql client init")
         self.host = host
         self.port = port
         self.user = user
