@@ -94,7 +94,7 @@ def face_register():
     image = aliyun_oss.pull_image_from_aliyun("%s/%s/%s/%s" % (appid, group_id, uid, image_name))
     if image is None:
         print("%s/%s/%s/%s not exist" % (appid, group_id, uid, image_name))
-        return jsonify({})
+        return jsonify({"errorMessage": "%s/%s/%s/%s not exist!!!!" % (appid, group_id, uid, image_name)})
     shape = image.shape
     print(shape)
     if shape[0] > 300:
@@ -107,14 +107,14 @@ def face_register():
     face_locations = face_recognition.face_locations(image, number_of_times_to_upsample)
     print("face_locations", time.time() - start, face_locations)
     if len(face_locations) != 1:
-        return jsonify({})
+        return jsonify({"errorMessage": "face num is not one!!!!"})
     start = time.time()
     face_encoding = face_recognition.face_encodings(image, face_locations, num_jitters)[0]
     print("face_encoding", time.time() - start)
     token = md5(face_encoding.tolist())
 
     if appid in feature_dict and group_id in feature_dict[appid] and token in feature_dict[appid][group_id]["image_token_list"]:
-        return jsonify({})
+        return jsonify({"errorMessage": "same pic repeat register"})
 
     sql_client.insert(table_name="keruyun.image", params={
         "uid": uid, "appid": appid, "group_id": group_id,
@@ -133,19 +133,19 @@ def face_detect():
 
     image_name = request.values.get("image_name")
     if image_name is None:
-        return jsonify({"error": "need image_name!"})
+        return jsonify({"errorMessage": "need image_name!"})
     appid = request.values.get("appid")
     if appid is None:
-        return jsonify({"error": "need appid!"})
+        return jsonify({"errorMessage": "need appid!"})
 
     group_id = request.values.get("group_id")
     if group_id is None:
-        return jsonify({"error": "need group_id!"})
+        return jsonify({"errorMessage": "need group_id!"})
     print("face detect %s/%s/%s" % (appid, group_id, image_name))
     image = aliyun_oss.pull_image_from_aliyun("%s/%s/%s" % (appid, group_id, image_name))
     if image is None:
         print("%s/%s/%s not exist" % (appid, group_id, image_name))
-        return jsonify({})
+        return jsonify({"errorMessage": "%s/%s/%s not exist" % (appid, group_id, image_name)})
     shape = image.shape
     print(shape)
     if shape[0] > 300:
@@ -176,9 +176,7 @@ def face_detect():
                     }
                 }
             )
-        return jsonify(result)
-    else:
-        return jsonify({})
+    return jsonify(result)
 
 
 @app.route('/face_search', methods=['GET', 'POST'])
@@ -209,25 +207,25 @@ def face_search():
     print("A", os.getpid(), os.getppid())
     image_name = request.values.get("image_name")
     if image_name is None:
-        return jsonify({"error": "need image_name!"})
+        return jsonify({"errorMessage": "need image_name!"})
     appid = request.values.get("appid")
     if appid is None:
-        return jsonify({"error": "need appid!"})
+        return jsonify({"errorMessage": "need appid!"})
 
     group_id = request.values.get("group_id")
     if group_id is None:
-        return jsonify({"error": "need group_id!"})
+        return jsonify({"errorMessage": "need group_id!"})
 
     search_group_id_list = request.values.get("search_group_id_list")
     if search_group_id_list is None:
-        return jsonify({"error": "need search_group_id_list!"})
+        return jsonify({"errorMessage": "need search_group_id_list!"})
 
     max_user_num = request.values.get("max_user_num")
     if max_user_num is None:
         max_user_num = 5
 
     if appid not in feature_dict:
-        return jsonify({})
+        return jsonify({"errorMessage": "appid invalid"})
     print("face search %s/%s/%s" % (appid, group_id, image_name))
     image = aliyun_oss.pull_image_from_aliyun("%s/%s/%s" % (appid, group_id, image_name))
     if image is None:
