@@ -213,7 +213,9 @@ def face_detect():
                     }
                 }
             )
-    return jsonify(result)
+        return jsonify(result)
+    else:
+        return jsonify({"errorMessage": "can not find face!!!"})
 
 
 @app.route('/face_search', methods=['GET', 'POST'])
