@@ -290,7 +290,7 @@ def face_search():
     face_locations = face_recognition.face_locations(image, number_of_times_to_upsample)
     print("face_locations", time.time() - start, face_locations)
     if len(face_locations) == 0:
-        return jsonify({"info": "can not find face!!!"})
+        return jsonify({"errorMessage": "can not find face!!!"})
     start = time.time()
     face_encoding = face_recognition.face_encodings(image, face_locations, num_jitters)[0]
     token = md5(face_encoding.tolist())
