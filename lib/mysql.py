@@ -40,6 +40,7 @@ class MysqlClient(object):
             sql = "SELECT %s FROM %s" % (field, table_name)
 
         self.execute(sql)
+        self.commit()
         return self.all()
 
     def pandas_select(self, field='*', table_name='', where=''):
@@ -63,6 +64,7 @@ class MysqlClient(object):
             sql = "SELECT %s FROM %s JOIN %s ON %s" % (field, last_table_name, first_table_name, join_with)
 
         self.execute(sql)
+        self.commit()
         return self.all()
 
     def update(self, table_name, params, where=''):
