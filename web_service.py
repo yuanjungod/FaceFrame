@@ -79,9 +79,8 @@ def face_register():
         feature_dict[i["appid"]][i["group_id"]]["uid_list"].append(i["uid"])
         feature_dict[i["appid"]][i["group_id"]]["image_token_list"].append(i["image_token"])
         feature_dict[i["appid"]][i["group_id"]]["image_encoding_list"].append(json.loads(i["image_encoding"]))
-    max_id = sql_client.select(field="max(id) as max_id", table_name="keruyun.image")[0]["max_id"]
-    if max_id is None:
-        max_id = 0
+        if max_id < i["id"]:
+            max_id = i["id"]
     mutex.release()
 
     start = time.time()
@@ -94,6 +93,7 @@ def face_register():
     print("face register %s/%s/%s%s" % (appid, group_id, uid, image_name))
     image = aliyun_oss.pull_image_from_aliyun("%s/%s/%s/%s" % (appid, group_id, uid, image_name))
     if image is None:
+        print("%s/%s/%s/%s not exist" % (appid, group_id, uid, image_name))
         return jsonify({})
     shape = image.shape
     print(shape)
@@ -144,6 +144,7 @@ def face_detect():
     print("face detect %s/%s/%s" % (appid, group_id, image_name))
     image = aliyun_oss.pull_image_from_aliyun("%s/%s/%s" % (appid, group_id, image_name))
     if image is None:
+        print("%s/%s/%s not exist" % (appid, group_id, image_name))
         return jsonify({})
     shape = image.shape
     print(shape)
@@ -200,9 +201,8 @@ def face_search():
         feature_dict[i["appid"]][i["group_id"]]["uid_list"].append(i["uid"])
         feature_dict[i["appid"]][i["group_id"]]["image_token_list"].append(i["image_token"])
         feature_dict[i["appid"]][i["group_id"]]["image_encoding_list"].append(json.loads(i["image_encoding"]))
-    max_id = sql_client.select(field="max(id) as max_id", table_name="keruyun.image")[0]["max_id"]
-    if max_id is None:
-        max_id = 0
+        if max_id < i["id"]:
+            max_id = i["id"]
     mutex.release()
 
     start = time.time()
@@ -231,6 +231,7 @@ def face_search():
     print("face search %s/%s/%s" % (appid, group_id, image_name))
     image = aliyun_oss.pull_image_from_aliyun("%s/%s/%s" % (appid, group_id, image_name))
     if image is None:
+        print("%s/%s/%s not exist" % (appid, group_id, image_name))
         return jsonify({})
     shape = image.shape
     print(shape)
