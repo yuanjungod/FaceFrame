@@ -253,11 +253,11 @@ def face_search():
     if not re.match("^[A-Za-z0-9_-]*$", appid):
         return jsonify({"errorMessage": "appid contain illegal character"})
 
-    group_id = request.values.get("group_id")
-    if group_id is None or group_id == "":
-        return jsonify({"errorMessage": "need group_id!"})
-    if not re.match("^[A-Za-z0-9_-]*$", group_id):
-        return jsonify({"errorMessage": "group_id contain illegal character"})
+    # group_id = request.values.get("group_id")
+    # if group_id is None or group_id == "":
+    #     return jsonify({"errorMessage": "need group_id!"})
+    # if not re.match("^[A-Za-z0-9_-]*$", group_id):
+    #     return jsonify({"errorMessage": "group_id contain illegal character"})
 
     search_group_id_list = request.values.get("search_group_id_list")
     if search_group_id_list is None or search_group_id_list == "":
