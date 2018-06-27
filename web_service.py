@@ -65,8 +65,10 @@ def face_register():
     global max_id
     print("max_id: %s" % max_id)
     # update feature_dict from face_encoding table
-    for i in sql_client.select(field="*", table_name="keruyun.image", where="id > %s" % max_id):
-        print("***********", i)
+    user_list = sql_client.select(field="*", table_name="keruyun.image", where="id > %s" % max_id)
+    print(user_list)
+    for i in user_list:
+        # print("***********", i)
         if i["appid"] not in feature_dict:
             feature_dict[i["appid"]] = dict()
         if i["group_id"] not in feature_dict[i["appid"]]:
@@ -185,7 +187,8 @@ def face_search():
     mutex.acquire()
     global max_id
     # update feature_dict from face_encoding table
-    for i in sql_client.select(field="*", table_name="keruyun.image", where="id > %s" % max_id):
+    user_list = sql_client.select(field="*", table_name="keruyun.image", where="id > %s" % max_id)
+    for i in user_list:
         if i["appid"] not in feature_dict:
             feature_dict[i["appid"]] = dict()
         if i["group_id"] not in feature_dict[i["appid"]]:
