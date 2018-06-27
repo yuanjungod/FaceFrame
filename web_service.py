@@ -72,6 +72,8 @@ def face_register():
         feature_dict[i["appid"]][i["group_id"]]["image_token_list"].append(i["image_token"])
         feature_dict[i["appid"]][i["group_id"]]["image_encoding_list"].append(json.loads(i["image_encoding"]))
     max_id = sql_client.select(field="max(id) as max_id", table_name="keruyun.image")[0]["max_id"]
+    if max_id is None:
+        max_id = 0
 
     start = time.time()
     print("A", os.getpid(), os.getppid())
@@ -155,10 +157,10 @@ def face_detect():
                     "face_token": md5(face_encoding_list[i].tolist()),
                     "location":
                     {
-                        "top": face_locations[0][0],
-                        "right": face_locations[0][1],
-                        "bottom": face_locations[0][2],
-                        "left": face_locations[0][3],
+                        "top": face_locations[i][0],
+                        "right": face_locations[i][1],
+                        "bottom": face_locations[i][2],
+                        "left": face_locations[i][3],
                     }
                 }
             )
@@ -187,6 +189,8 @@ def face_search():
         feature_dict[i["appid"]][i["group_id"]]["image_token_list"].append(i["image_token"])
         feature_dict[i["appid"]][i["group_id"]]["image_encoding_list"].append(json.loads(i["image_encoding"]))
     max_id = sql_client.select(field="max(id) as max_id", table_name="keruyun.image")[0]["max_id"]
+    if max_id is None:
+        max_id = 0
 
     start = time.time()
     print("A", os.getpid(), os.getppid())
