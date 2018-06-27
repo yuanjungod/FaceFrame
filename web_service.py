@@ -110,18 +110,24 @@ def face_register():
         return jsonify({"errorMessage": "need appid!"})
     if not re.match("^[A-Za-z0-9_-]*$", appid):
         return jsonify({"errorMessage": "appid contain illegal character"})
+    if len(appid) > 20:
+        return jsonify({"errorMessage": "appid is too long"})
 
     group_id = request.values.get("group_id")
     if group_id is None or group_id == "":
         return jsonify({"errorMessage": "need group_id!"})
     if not re.match("^[A-Za-z0-9_-]*$", group_id):
         return jsonify({"errorMessage": "group_id contain illegal character"})
+    if len(group_id) > 20:
+        return jsonify({"errorMessage": "group_id is too long"})
 
     uid = request.values.get("uid")
     if uid is None or uid == "":
         return jsonify({"errorMessage": "need uid!"})
     if not re.match("^[A-Za-z0-9_-]*$", uid):
         return jsonify({"errorMessage": "uid contain illegal character"})
+    if len(group_id) > 20:
+        return jsonify({"errorMessage": "uid is too long"})
 
     image = base64_to_image(base64_image_str)
     # image = aliyun_oss.pull_image_from_aliyun("%s/%s/%s/%s" % (appid, group_id, uid, image_name))
@@ -259,6 +265,8 @@ def face_search():
         return jsonify({"errorMessage": "appid contain illegal character"})
     if appid not in feature_dict:
         return jsonify({"errorMessage": "appid invalid"})
+    if len(appid) > 20:
+        return jsonify({"errorMessage": "appid is too long"})
 
     # group_id = request.values.get("group_id")
     # if group_id is None or group_id == "":
