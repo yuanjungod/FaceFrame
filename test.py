@@ -40,7 +40,7 @@ def get_image_base64(image_path):
 
 
 start = time.time()
-result = requests.post("http://localhost:5001/face_detect",
+result = requests.post("http://ai-api.keruyun.com:5001/face_detect",
                        data={
                            'base64_image_str': get_image_base64("face_images/ziyu_5.jpg"),
                            'appid': 2,
