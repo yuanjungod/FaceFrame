@@ -145,7 +145,7 @@ def face_register():
     face_locations = face_recognition.face_locations(image, number_of_times_to_upsample)
     # print("face_locations", time.time() - start, face_locations)
     if len(face_locations) == 0:
-        return jsonify({"errorMessage": "no face!!!!"})
+        return jsonify({"errorMessage": "can not find face!!!!"})
     if len(face_locations) > 0:
         return jsonify({"errorMessage": "too many face!!!!"})
     start = time.time()
