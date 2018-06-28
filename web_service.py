@@ -146,7 +146,7 @@ def face_register():
     # print("face_locations", time.time() - start, face_locations)
     if len(face_locations) == 0:
         return jsonify({"errorMessage": "can not find face!!!!"})
-    if len(face_locations) > 0:
+    if len(face_locations) > 1:
         return jsonify({"errorMessage": "too many face!!!!"})
     start = time.time()
     face_encoding = face_recognition.face_encodings(image, face_locations, num_jitters)[0]
