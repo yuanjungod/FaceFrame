@@ -13,6 +13,7 @@ from config import *
 import threading
 import re
 import os, base64
+import cv2
 
 mutex = threading.Lock()
 
@@ -35,7 +36,7 @@ def base64_to_image(strs):
 
 
 sql_client = MysqlClient(host='localhost', user='root')
-aliyun_oss = Aliyun(account_info)
+aliyun_oss = Aliyun()
 
 
 app = Flask(__name__)
@@ -172,8 +173,20 @@ def face_detect():
     print("A", os.getpid(), os.getppid())
 
     base64_image_str = request.values.get("base64_image_str")
+    image = None
     if base64_image_str is None or base64_image_str == "":
-        return jsonify({"errorMessage": "need base64_image_str!"})
+        upload_file = request.files['base64_image_str']
+        if upload_file:
+            try:
+                image_str = np.asarray(bytearray(upload_file.stream.read()), dtype="uint8")
+                image = cv2.imdecode(image_str, cv2.IMREAD_COLOR)
+            except:
+                pass
+            print("fuck", image.shape)
+        else:
+            return jsonify({"errorMessage": "need base64_image_str!"})
+    else:
+        image = base64_to_image(base64_image_str)
 
     appid = request.values.get("appid")
     if appid is None or appid == "":
@@ -184,13 +197,6 @@ def face_detect():
     if appid not in feature_dict:
         return jsonify({"errorMessage": "appid invalid"})
 
-    # group_id = request.values.get("group_id")
-    # if group_id is None or group_id == "":
-    #     return jsonify({"errorMessage": "need group_id!"})
-    # if not re.match("^[A-Za-z0-9_-]*$", group_id):
-    #     return jsonify({"errorMessage": "group_id contain illegal character"})
-
-    image = base64_to_image(base64_image_str)
     # image = aliyun_oss.pull_image_from_aliyun("%s/%s/%s" % (appid, group_id, image_name))
     if image is None:
         return jsonify({"errorMessage": "base64_image_str wrong"})
