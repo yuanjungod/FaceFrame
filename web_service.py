@@ -103,8 +103,21 @@ def face_register():
     print("A", os.getpid(), os.getppid())
 
     base64_image_str = request.values.get("base64_image_str")
+    image = None
     if base64_image_str is None or base64_image_str == "":
-        return jsonify({"errorMessage": "need base64_image_str!"})
+        try:
+            upload_file = request.files['base64_image_str']
+            print(upload_file)
+            if upload_file:
+                image_str = np.asarray(bytearray(upload_file.stream.read()), dtype="uint8")
+                image = cv2.imdecode(image_str, cv2.IMREAD_COLOR)
+                print("fuck", image.shape)
+            else:
+                return jsonify({"errorMessage": "need base64_image_str!"})
+        except:
+            jsonify({"errorMessage": "need base64_image_str!"})
+    else:
+        image = base64_to_image(base64_image_str)
 
     appid = request.values.get("appid")
     if appid is None or appid == "":
@@ -130,7 +143,7 @@ def face_register():
     if len(group_id) > 20:
         return jsonify({"errorMessage": "uid is too long"})
 
-    image = base64_to_image(base64_image_str)
+    # image = base64_to_image(base64_image_str)
     # image = aliyun_oss.pull_image_from_aliyun("%s/%s/%s/%s" % (appid, group_id, uid, image_name))
     if image is None:
         return jsonify({"errorMessage": "base64_image_str wrong"})
@@ -175,16 +188,17 @@ def face_detect():
     base64_image_str = request.values.get("base64_image_str")
     image = None
     if base64_image_str is None or base64_image_str == "":
-        upload_file = request.files['base64_image_str']
-        if upload_file:
-            try:
+        try:
+            upload_file = request.files['base64_image_str']
+            print(upload_file)
+            if upload_file:
                 image_str = np.asarray(bytearray(upload_file.stream.read()), dtype="uint8")
                 image = cv2.imdecode(image_str, cv2.IMREAD_COLOR)
-            except:
-                pass
-            print("fuck", image.shape)
-        else:
-            return jsonify({"errorMessage": "need base64_image_str!"})
+                print("fuck", image.shape)
+            else:
+                return jsonify({"errorMessage": "need base64_image_str!"})
+        except:
+            jsonify({"errorMessage": "need base64_image_str!"})
     else:
         image = base64_to_image(base64_image_str)
 
@@ -263,8 +277,23 @@ def face_search():
     start = time.time()
     print("A", os.getpid(), os.getppid())
     base64_image_str = request.values.get("base64_image_str")
+    print("as")
+    image = None
     if base64_image_str is None or base64_image_str == "":
-        return jsonify({"errorMessage": "need base64_image_str!"})
+        try:
+            upload_file = request.files['base64_image_str']
+            print(upload_file)
+            if upload_file:
+                image_str = np.asarray(bytearray(upload_file.stream.read()), dtype="uint8")
+                image = cv2.imdecode(image_str, cv2.IMREAD_COLOR)
+                print("fuck", image.shape)
+            else:
+                return jsonify({"errorMessage": "need base64_image_str!"})
+        except:
+            jsonify({"errorMessage": "need base64_image_str!"})
+
+    else:
+        image = base64_to_image(base64_image_str)
 
     appid = request.values.get("appid")
     if appid is None or appid == "":
@@ -300,7 +329,7 @@ def face_search():
 
     # print("face search %s/%s/%s" % (appid, group_id, image_name))
 
-    image = base64_to_image(base64_image_str)
+    # image = base64_to_image(base64_image_str)
     # image = aliyun_oss.pull_image_from_aliyun("%s/%s/%s" % (appid, group_id, image_name))
     if image is None:
         return jsonify({"errorMessage": "base64_image_str wrong"})

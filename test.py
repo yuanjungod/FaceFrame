@@ -24,11 +24,11 @@ def get_image_base64(image_path):
 #     print(result.json())
 #     print(time.time()-start)
 #     exit()
-
+#
 # start = time.time()
-# result = requests.post("http://172.16.30.162:5001/face_search",
+# result = requests.post("http://localhost:5001/face_search",
 #                        data={
-#                            'image_name': "1/erge_2.jpg",
+#                            'base64_image_str': get_image_base64("face_images/ziyu_5.jpg"),
 #                            'appid': 2,
 #                            'group_id': 1,
 #                            "search_group_id_list": "1"
@@ -38,13 +38,13 @@ def get_image_base64(image_path):
 
 
 start = time.time()
-result = requests.post("http://192.168.18.121:5001/face_detect",
+result = requests.post("http://ai-api.keruyun.com:5001/face_detect",
                        data={
                            'base64_image_str': get_image_base64("face_images/ziyu_5.jpg"),
-                           'appid': 2,
+                           'appid': "q6",
                            })
 print(result.json())
-# # print(time.time()-start)
+# print(time.time()-start)
 #
 #
 # import requests
