@@ -4,3 +4,4 @@
 env/*
 dlib_face_recognition_resnet_model_v1.dat
 .DS_Store
+__pycache__

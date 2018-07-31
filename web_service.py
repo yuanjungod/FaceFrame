@@ -216,6 +216,7 @@ def face_detect():
         return jsonify({"errorMessage": "base64_image_str wrong"})
     shape = image.shape
     print(shape)
+    radio = 1
     if shape[0] > 300:
         radio = 300.0 / shape[0]
         image = cv2.resize(image, (int(shape[1] * radio), 300))

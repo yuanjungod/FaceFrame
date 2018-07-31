@@ -7,8 +7,8 @@ import numpy as np
 
 def fun():
     video_capture = cv2.VideoCapture(0)
-    num_jitters = 10
-    number_of_times_to_upsample = 1
+    num_jitters = 5
+    number_of_times_to_upsample = 2
     # cls.init(callback)
     # Load a sample picture and learn how to recognize it.
     print("encode example")
@@ -54,7 +54,7 @@ def fun():
         print(frame.shape)
         small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
         print(small_frame.shape)
-        cv2.imwrite("face_images/yuanjun1_9.jpg", small_frame)
+        # cv2.imwrite("face_images/yuanjun1_9.jpg", small_frame)
 
         # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
         rgb_small_frame = small_frame[:, :, ::-1]
@@ -71,8 +71,9 @@ def fun():
                 name = "Unknown"
                 user_id = -1
                 # See if the face is a match for the known face(s)
-                current_match_score = 0.4
+                current_match_score = 0.6
                 match_scores = face_recognition.face_distance([i[2] for i in face_encoding_list], face_encoding)
+                print("match_score", match_scores)
                 for i, match_score in enumerate(match_scores):
                     if match_score < current_match_score:
                         current_match_score = match_score

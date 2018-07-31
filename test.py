@@ -2,7 +2,6 @@ import requests
 import time
 import os
 
-
 import base64
 
 
@@ -11,39 +10,61 @@ def get_image_base64(image_path):
         base64_data = base64.b64encode(f.read())
         return base64_data
 
-# start = time.time()
+
+start = time.time()
+
+#
 # for image_path in os.listdir("face_images/"):
 #
-#     result = requests.post("http://172.16.30.162:5001/face_register",
+#     result = requests.post("http://ai-api.keruyun.com:5001/face_register",
 #                            data={
-#                                'image_name': image_path,
-#                                'appid': 2,
+#                                'base64_image_str': get_image_base64("face_images/yuanjun1_9.jpg"),
+#                                'appid': 'q6',
 #                                'group_id': 1,
-#                                "uid": image_path.split("_")[1].split(".")[0]
+#                                "uid": "000022147"
 #                            })
 #     print(result.json())
 #     print(time.time()-start)
-#     exit()
+#     break
 #
 # start = time.time()
-# result = requests.post("http://localhost:5001/face_search",
+# result = requests.post("http://ai-api.keruyun.com:5001/face_search",
 #                        data={
-#                            'base64_image_str': get_image_base64("face_images/ziyu_5.jpg"),
-#                            'appid': 2,
+#                            'base64_image_str': get_image_base64("face_images/yuanjun_1.jpg"),
+#                            'appid': 'q6',
 #                            'group_id': 1,
 #                            "search_group_id_list": "1"
 #                            })
 # print(result.json())
 # print(time.time()-start)
 
+# import random
+#
+# image_files = os.listdir("face_images/")
+# while True:
+#     left = random.choice(image_files)
+#     right = random.choice(image_files)
+#     result = requests.post("http://localhost:18080/ver",
+#                            data={
+#                                'source': get_image_base64("face_images/%s" % left),
+#                                'target': get_image_base64("face_images/%s" % right),
+#                            })
+#     print(left, right, result.text)
 
-start = time.time()
-result = requests.post("http://ai-api.keruyun.com:5001/face_detect",
-                       data={
-                           'base64_image_str': get_image_base64("face_images/ziyu_5.jpg"),
-                           'appid': "q6",
+result = requests.post("http://localhost:18080/ver",
+                           data={
+                               'source': get_image_base64("face_images/yuanjun_83838338.jpeg"),
+                               'target': get_image_base64("face_images/yuanjun1_9.jpg"),
                            })
-print(result.json())
+print(result.text)
+
+# start = time.time()
+# result = requests.post("http://ai-api.keruyun.com:5001/face_detect",
+#                        data={
+#                            'base64_image_str': get_image_base64("/Users/happy/Downloads/yuanjun_83838338.jpeg"),
+#                            'appid': "q6",
+#                            })
+# print(result.json())
 # print(time.time()-start)
 #
 #
@@ -119,7 +140,7 @@ class Aliyun(object):
             # print self.account_local_time, self.account_info.expires_in
 
             while (self.account_info is None) or (self.account_local_time is None) or (
-                    self.account_info is not None and self.account_local_time+self.account_info.expires_in + 10 < time.time()):
+                    self.account_info is not None and self.account_local_time + self.account_info.expires_in + 10 < time.time()):
                 time.sleep(0.5)
                 # print "account_local_time", self.account_local_time
                 print("account_info", self.account_info)
@@ -137,7 +158,8 @@ class Aliyun(object):
         # self.check_account()
         threads = list()
         for i in range(len(remote_file_name_list)):
-            threads.append(threading.Thread(target=self.push_image_2_aliyun, args=(remote_file_name_list[i], image_list[i])))
+            threads.append(
+                threading.Thread(target=self.push_image_2_aliyun, args=(remote_file_name_list[i], image_list[i])))
         for thread in threads:
             thread.start()
             thread.join()
