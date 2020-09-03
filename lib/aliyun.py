@@ -76,9 +76,9 @@ if __name__ == "__main__":
     import os
     from lib.mysql import *
     # account_info = {
-    #     "AccessKeyId": "LTAI1121mPMMQ0mO",
-    #     "AccessKeySecret": "3rZfXSiHE0KNvZU8csYiFEPtViPY0v",
-    #     "EndPoint": "oss-cn-shenzhen.aliyuncs.com",
+    #     "AccessKeyId": "***",
+    #     "AccessKeySecret": "**",
+    #     "EndPoint": "***",
     #     "Bucket": "keruyun-face"
     # }
     #
